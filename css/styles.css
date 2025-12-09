@@ -331,6 +331,12 @@ body {
     /* Remove border if nested */
 }
 
+/* Specific override for View Settings Panel in Tab */
+.tab-pane #view-settings-panel {
+    max-height: none;
+    flex: 1;
+}
+
 /* --- Export Preview & Crop UI --- */
 .preview-container {
     position: relative;
