@@ -284,12 +284,26 @@ class Renderer {
 
         // Label
         const labelPos = this.project(minX * this.TILE_SIZE, minY * this.TILE_SIZE, level);
-        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+
+        const bgLum = this.getLuminance(this.backgroundColor);
+        const isLightBg = bgLum > 0.5;
+        this.ctx.fillStyle = isLightBg ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.6)';
+
         this.ctx.font = '16px Inter, sans-serif';
         this.ctx.textAlign = 'left';
         this.ctx.fillText(`Level ${level}`, labelPos.x, labelPos.y - 10);
 
         this.ctx.restore();
+    }
+
+
+
+    getLuminance(hex) {
+        if (!hex || !hex.startsWith('#')) return 0;
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
     }
 
     drawTile(gx, gy, level) {
@@ -317,8 +331,19 @@ class Renderer {
             this.ctx.fillStyle = this.hexToRgba(customColor, alpha);
             this.ctx.strokeStyle = this.hexToRgba(customColor, 0.3);
         } else {
-            this.ctx.fillStyle = isChecker ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.06)';
-            this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            // Adaptive Grid Color
+            const bgLum = this.getLuminance(this.backgroundColor);
+            const isLightBg = bgLum > 0.5;
+
+            if (isLightBg) {
+                // Dark Grid for Light Background
+                this.ctx.fillStyle = isChecker ? 'rgba(0, 0, 0, 0.03)' : 'rgba(0, 0, 0, 0.06)';
+                this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.05)';
+            } else {
+                // Light Grid for Dark Background (Default)
+                this.ctx.fillStyle = isChecker ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.06)';
+                this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            }
         }
 
         this.ctx.fill();
