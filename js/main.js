@@ -13,6 +13,24 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', resize);
     resize();
 
+    // UI Enhancements
+    // 1. Drag Hint Dismissal
+    const hint = document.getElementById('drag-hint');
+    if (hint) {
+        hint.addEventListener('click', () => {
+            hint.style.display = 'none';
+        });
+        // Also hide on first drag? 
+        // Maybe better to let user click it to dismiss so they definitely saw it.
+        // Let's stick to click-to-dismiss as requested.
+    }
+
+    // 2. Disable Context Menu on Canvas
+    canvas.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        return false;
+    });
+
     // Initialize Systems (Globals expected)
     const graph = new Graph();
     const layoutEngine = new LayoutEngine(graph);

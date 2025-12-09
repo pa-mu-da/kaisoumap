@@ -124,6 +124,28 @@ body {
     cursor: grabbing;
 }
 
+#drag-hint {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: rgba(255, 255, 255, 0.7);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    pointer-events: auto;
+    cursor: pointer;
+    user-select: none;
+    transition: opacity 0.3s;
+    z-index: 50;
+}
+
+#drag-hint:hover {
+    color: rgba(255, 255, 255, 1);
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
 /* Sidebar Properties */
 .sidebar {
     position: absolute;
