@@ -73,6 +73,10 @@ class UIManager {
             }
         });
 
+        safeClick('duplicate-btn', () => {
+            this.duplicateNode();
+        });
+
         // --- Export / Import ---
         safeClick('export-json-btn', () => this.downloadJSON());
         safeClick('import-json-btn', () => document.getElementById('json-file-input').click());
@@ -409,7 +413,7 @@ class UIManager {
         const container = document.getElementById('edge-settings');
         container.innerHTML = '';
 
-        const controls = this.createEdgeControls(edge);
+        const controls = this.createEdgeControls(edge, true);
         controls.forEach(c => container.appendChild(c));
     }
 
@@ -436,6 +440,7 @@ class UIManager {
         const hasSelection = !!this.selectedNodeId;
         document.getElementById('add-child-btn').disabled = !hasSelection;
         document.getElementById('delete-btn').disabled = !hasSelection;
+        document.getElementById('duplicate-btn').disabled = !hasSelection;
     }
 
     renderPropertiesPanel(node) {
@@ -456,20 +461,17 @@ class UIManager {
         ]);
 
         // --- Layout Section ---
-        // Only show for Root Nodes (no parent) as children are auto-laid out?
-        // Actually, LayoutEngine executeLayout doesn't use customX for children, only roots.
-        if (!node.parentId) {
-            this.createSection(panel, '配置設定', [
-                this.createInput('X座標 (自動レイアウト基準: 0)', 'number', node.customX !== undefined ? node.customX : '', (val) => {
-                    node.customX = val === '' ? undefined : parseInt(val);
-                    this.graph.notify();
-                }),
-                this.createInput('Y座標 (自動レイアウト基準: 0)', 'number', node.customY !== undefined ? node.customY : '', (val) => {
-                    node.customY = val === '' ? undefined : parseInt(val);
-                    this.graph.notify();
-                })
-            ]);
-        }
+        // Always show for Manual Override
+        this.createSection(panel, '配置設定', [
+            this.createInput('X座標 (自動レイアウト基準: 0)', 'number', node.customX !== undefined ? node.customX : '', (val) => {
+                node.customX = val === '' ? undefined : parseInt(val);
+                this.graph.notify();
+            }),
+            this.createInput('Y座標 (自動レイアウト基準: 0)', 'number', node.customY !== undefined ? node.customY : '', (val) => {
+                node.customY = val === '' ? undefined : parseInt(val);
+                this.graph.notify();
+            })
+        ]);
 
         // --- Size Section ---
         this.createSection(panel, 'サイズ (グリッド単位)', [
@@ -507,7 +509,9 @@ class UIManager {
         if (node.parentId) {
             const edge = this.graph.edges.find(e => e.sourceId === node.parentId && e.targetId === node.id);
             if (edge) {
-                this.createSection(panel, '親ノードとの接続', this.createEdgeControls(edge));
+                if (edge) {
+                    this.createSection(panel, '親ノードとの接続', this.createEdgeControls(edge, false));
+                }
             }
         }
 
@@ -523,8 +527,8 @@ class UIManager {
         ]);
     }
 
-    createEdgeControls(edge) {
-        return [
+    createEdgeControls(edge, allowDelete = true) {
+        const controls = [
             this.createSelect('線種', edge.style.type,
                 [
                     { val: 'solid', label: '実線' },
@@ -537,25 +541,27 @@ class UIManager {
                 true
             ),
             this.createColorInput('線の色', edge.style.color, (val) => this.graph.updateEdgeStyle(edge.sourceId, edge.targetId, { color: val })),
-            this.createInput('線の太さ', 'number', edge.style.width, (val) => this.graph.updateEdgeStyle(edge.sourceId, edge.targetId, { width: parseInt(val) })),
-
-            // Delete Button
-            (() => {
-                const btn = document.createElement('button');
-                btn.textContent = '削除';
-                btn.className = 'btn danger';
-                btn.style.marginTop = '10px';
-                btn.style.width = '100%';
-                btn.onclick = () => {
-                    this.graph.removeEdge(edge.sourceId, edge.targetId);
-                    this.switchTab('tab-view');
-                    document.getElementById('edge-settings').innerHTML = '';
-                    document.getElementById('edge-settings').style.display = 'none';
-                    document.getElementById('edge-placeholder').style.display = 'block';
-                };
-                return btn;
-            })()
+            this.createInput('線の太さ', 'number', edge.style.width, (val) => this.graph.updateEdgeStyle(edge.sourceId, edge.targetId, { width: parseInt(val) }))
         ];
+
+        if (allowDelete) {
+            // Delete Button
+            const btn = document.createElement('button');
+            btn.textContent = '削除';
+            btn.className = 'btn danger';
+            btn.style.marginTop = '10px';
+            btn.style.width = '100%';
+            btn.onclick = () => {
+                this.graph.removeEdge(edge.sourceId, edge.targetId);
+                this.switchTab('tab-view');
+                document.getElementById('edge-settings').innerHTML = '';
+                document.getElementById('edge-settings').style.display = 'none';
+                document.getElementById('edge-placeholder').style.display = 'block';
+            };
+            controls.push(btn);
+        }
+
+        return controls;
     }
 
     // --- Helper UI Creators ---
@@ -755,6 +761,75 @@ class UIManager {
             }
         };
         reader.readAsText(file);
+    }
+
+    duplicateNode() {
+        if (!this.selectedNodeId) return;
+        const original = this.graph.nodes.get(this.selectedNodeId);
+        if (!original) return;
+
+        // 1. Generate Name
+        const baseLabel = original.label;
+        let newLabel = baseLabel;
+        const match = baseLabel.match(/^(.*?)(\d+)$/);
+
+        let prefix = baseLabel;
+        let number = 2;
+
+        if (match) {
+            prefix = match[1];
+            number = parseInt(match[2]) + 1;
+        } else {
+            // If no number, append space if needed? User said "Name + Number (start from 2)"
+            // Example: "Room" -> "Room 2"
+            // But if it's "RoomA", maybe "RoomA 2"?
+            // Let's assume just append " 2" if no number exists, or just "2" if user prefers tightly packed?
+            // Screenshot had "Guest Room A", "Guest Room B".
+            // User request: "同じ名前+数字(最初の複製は2から始まります。2があれば3...)"
+            // If label is "Room", next is "Room 2".
+            prefix = baseLabel + ' '; // Add space for separation? standard behavior usually.
+        }
+
+        // Find unique name
+        while (true) {
+            newLabel = prefix.trim() + ' ' + number; // trimming to avoid double spaces
+            // Check existence
+            const exists = Array.from(this.graph.nodes.values()).some(n => n.label === newLabel);
+            if (!exists) break;
+            number++;
+        }
+
+        // 2. Clone Properties
+        const newData = {
+            label: newLabel,
+            level: original.level,
+            gridW: original.gridW,
+            gridH: original.gridH,
+            style: JSON.parse(JSON.stringify(original.style)) // Deep copy style
+        };
+
+        // 3. Placement
+        if (original.parentId) {
+            newData.parentId = original.parentId;
+            // LayoutEngine will handle X/Y automatically for children
+        } else {
+            // Root Node: Place neighbor in Y direction
+            // Copy X, Shift Y
+            newData.customX = original.customX; // Keep alignment
+
+            // Calculate new Y. 
+            // If original has customY, use it + height + spacing (1)
+            // If not, it's 0.
+            const baseY = (original.customY !== undefined) ? original.customY : 0;
+            newData.customY = baseY + original.gridH + 1;
+        }
+
+        // 4. Create Node
+        const newNode = this.graph.addNode(newData);
+
+        // 5. Select New Node
+        this.selectNode(newNode);
+        this.renderViewSettings();
     }
 
     setupExportUI() {

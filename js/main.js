@@ -20,14 +20,41 @@ document.addEventListener('DOMContentLoaded', () => {
     new UIManager(graph, renderer);
 
     // Initial Data
-    const root = graph.addNode({ label: 'メインサーバー / Main' });
-    const c1 = graph.addNode({ parentId: root.id, label: 'DBクラスタ / DB', style: { fillColor: '#1c1c1e', patternType: 'stripes' } });
-    const c2 = graph.addNode({ parentId: root.id, label: 'キャッシュ / Cache', style: { fillColor: '#1c1c1e', patternType: 'dots' } });
-    const c3 = graph.addNode({ parentId: root.id, label: 'ワーカー / Worker' });
+    // Initial Data
+    // Level 0: Main Floor
+    const mainHall = graph.addNode({ label: 'メインホール', style: { fillColor: '#4a90e2' } });
+    const reception = graph.addNode({ parentId: mainHall.id, label: '応接室' });
+    const dining = graph.addNode({ parentId: mainHall.id, label: '食堂' });
 
-    // Grandchildren
-    graph.addNode({ parentId: c1.id, label: 'シャード1 / Shard' });
-    graph.addNode({ parentId: c1.id, label: 'シャード2 / Shard' });
+    // Kitchen Chain
+    const kitchen = graph.addNode({ parentId: dining.id, label: '厨房' });
+    const pantry = graph.addNode({ parentId: kitchen.id, label: 'パントリー' });
+    const wine = graph.addNode({ parentId: pantry.id, label: 'ワイン保管庫' });
+
+    // Level 1: Guest Floor (Connected from Main Hall)
+    const guestHall = graph.addNode({
+        parentId: mainHall.id,
+        label: '客室ホール',
+        level: 1, // Explicitly set level for clarity, though LayoutEngine might override if strict tree
+        style: { fillColor: '#4a90e2', patternType: 'grid' }
+    });
+
+    const roomA = graph.addNode({ parentId: guestHall.id, label: '客室A' });
+    const roomB = graph.addNode({ parentId: guestHall.id, label: '客室B' });
+    const roomC = graph.addNode({ parentId: guestHall.id, label: '客室C' });
+
+    // Update Edges for specific styles
+    // Guest Rooms -> Dashed
+    [roomA, roomB, roomC].forEach(room => {
+        graph.updateEdgeStyle(guestHall.id, room.id, { type: 'dashed' });
+    });
+    // Pantry chain -> Dotted (Looks dotted/small in screenshot for some path? 
+    // Actually screenshot shows dotted for Kitchen->Pantry->Wine)
+    graph.updateEdgeStyle(kitchen.id, pantry.id, { type: 'dotted' });
+    graph.updateEdgeStyle(pantry.id, wine.id, { type: 'dotted' });
+
+    // Main -> Guest Hall connection might need to be bold or specific? 
+    // Default is usually fine.
 
     // Hook layout update
     graph.subscribe(() => {

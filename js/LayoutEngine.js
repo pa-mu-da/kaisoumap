@@ -67,14 +67,14 @@ class LayoutEngine {
         // We want the (gridX + width/2) to be at the average center
         const center = (first + last) / 2;
 
-        // gridX = center - halfWidth
-        // Round to nearest integer to snap to grid
-        node.gridX = Math.round(center - (node.gridW - 1) / 2);
-
-        // If sorting resulted in the node being placed BEFORE the offset (overlapping previous), shift it?
-        // But for tree layout, children usually determine width. 
-        // If node width is huge (bigger than children span), we might overlap.
-        // For now assume standard 1x1 nodes.
+        // Check for Manual Override
+        if (node.customX !== undefined && node.customX !== null && node.customX !== '') {
+            node.gridX = parseInt(node.customX);
+        } else {
+            // gridX = center - halfWidth
+            // Round to nearest integer to snap to grid
+            node.gridX = Math.round(center - (node.gridW - 1) / 2);
+        }
 
         // Ensure strictly integer
         node.gridX = Math.round(node.gridX);
