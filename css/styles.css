@@ -246,6 +246,25 @@ body {
     gap: 10px;
 }
 
+/* Force dark style for graph controls to be visible on light canvas */
+.graph-controls .btn {
+    background-color: #333 !important;
+    color: #ccc !important;
+    border: 1px solid #555 !important;
+}
+
+.graph-controls .btn:hover:not(:disabled) {
+    background-color: #444 !important;
+    color: #fff !important;
+    border-color: #666 !important;
+}
+
+.graph-controls .btn:disabled {
+    opacity: 0.5;
+    background-color: #222 !important;
+    border-color: #444 !important;
+}
+
 /* Modal */
 .modal-overlay {
     position: fixed;

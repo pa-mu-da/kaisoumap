@@ -1201,7 +1201,11 @@ class UIManager {
         const offX = -this.cropRectWorld.x * scaleVal;
         const offY = -this.cropRectWorld.y * scaleVal;
 
-        this.renderer.renderToContext(ctx, w, h, scaleVal, offX, offY, bgColor, isTransparent);
+        // Get Text Option
+        const textOpt = document.querySelector('input[name="export-text-opt"]:checked').value;
+        const drawLabels = (textOpt === 'on');
+
+        this.renderer.renderToContext(ctx, w, h, scaleVal, offX, offY, bgColor, isTransparent, { drawLabels: drawLabels });
 
         const link = document.createElement('a');
         link.download = `map_export.png`;
