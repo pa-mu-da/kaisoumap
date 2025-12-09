@@ -45,8 +45,25 @@ class LayoutEngine {
         if (node.gridH === undefined) node.gridH = 1;
 
         if (node.childrenIds.length === 0) {
-            node.gridX = gridXOffset;
-            return gridXOffset + node.gridW + this.spacing;
+            // Check for Manual Override
+            if (node.customX !== undefined && node.customX !== null && node.customX !== '') {
+                node.gridX = parseInt(node.customX);
+            } else {
+                node.gridX = gridXOffset;
+            }
+            // Ensure strictly integer (though parseInt handles it, good for consistency if we add calc)
+            // Just use the set value or offset.
+
+            // Return max X used. If manual, we still return based on width to avoid overlap if sequence continues?
+            // If manual, it might jump. 
+            // If we want subsequent auto-layout nodes to flow after this manual one:
+            // return Math.max(gridXOffset, node.gridX + node.gridW + this.spacing);
+            // But usually manual means "I place it here", and subsequent nodes might be children of THIS node (but this is leaf).
+            // Siblings are handled by parent loop. 'nextGridX' in parent loop becomes 'endGridX' returned here.
+
+            // If I move this node to X=100 manually, should the next sibling start at 101?
+            // Yes, probably.
+            return Math.max(gridXOffset, node.gridX + node.gridW + this.spacing);
         }
 
         let nextGridX = gridXOffset;
