@@ -240,9 +240,9 @@ class Renderer {
         // Expand bounds based on Viewport (Visible Area)
         const corners = [
             { x: 0, y: 0 },
-            { x: this.canvas.width, y: 0 },
-            { x: this.canvas.width, y: this.canvas.height },
-            { x: 0, y: this.canvas.height }
+            { x: this.ctx.canvas.width, y: 0 },
+            { x: this.ctx.canvas.width, y: this.ctx.canvas.height },
+            { x: 0, y: this.ctx.canvas.height }
         ];
 
         let vMinX = Infinity, vMaxX = -Infinity, vMinY = Infinity, vMaxY = -Infinity;
