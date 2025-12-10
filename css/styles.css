@@ -49,6 +49,8 @@ body {
     font-weight: 600;
     font-size: 1.2rem;
     color: var(--text-primary);
+    display: flex;
+    align-items: center;
 }
 
 .tools {
@@ -440,6 +442,7 @@ body {
     justify-content: center;
     align-items: center;
     width: 20px;
+    min-width: 20px;
     height: 20px;
     border-radius: 50%;
     background-color: rgba(255, 255, 255, 0.1);
