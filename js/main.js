@@ -31,6 +31,27 @@ document.addEventListener('DOMContentLoaded', () => {
         return false;
     });
 
+    // Help Modal Logic
+    const helpBtn = document.getElementById('help-btn');
+    const helpModal = document.getElementById('help-modal');
+    const closeHelpBtn = document.getElementById('close-help-btn');
+
+    if (helpBtn && helpModal && closeHelpBtn) {
+        helpBtn.addEventListener('click', () => {
+            helpModal.style.display = 'flex';
+        });
+
+        closeHelpBtn.addEventListener('click', () => {
+            helpModal.style.display = 'none';
+        });
+
+        helpModal.addEventListener('click', (e) => {
+            if (e.target === helpModal) {
+                helpModal.style.display = 'none';
+            }
+        });
+    }
+
     // Initialize Systems (Globals expected)
     const graph = new Graph();
     const layoutEngine = new LayoutEngine(graph);
