@@ -16,6 +16,256 @@
         <!-- Toolbar -->
         <header class="toolbar">
             <div class="brand">
+<!-- ナビゲーションバー - ここから貼り付け開始 --> 
+<style>
+  /* カラーテーマCSS変数 (既存のまま) */
+  :root { /* Light Theme (Default) */
+    --app-bg-color: #f9fafb;
+    --app-text-color: #111827;
+    --header-bg-color: rgba(255, 255, 255, 0.95);
+    --modal-bg-color: #ffffff;
+    --button-hover-bg-color: #d1d5db;
+    --link-active-text-color: #3730a3;
+    --border-color: #d1d5db;
+    --btn-bg-color: #e5e7eb;
+  }
+  html.dark {
+    --app-bg-color: #111827;
+    --app-text-color: #f3f4f6;
+    --header-bg-color: rgba(31, 41, 55, 0.95);
+    --modal-bg-color: #1f2937;
+    --button-hover-bg-color: #4b5563;
+    --link-active-text-color: #e0e7ff;
+    --border-color: #4b5563;
+    --btn-bg-color: #374151;
+  }
+  html.theme-earth.dark {
+    --app-bg-color: #3e2723;
+    --app-text-color: #efebe9;
+    --header-bg-color: rgba(62, 39, 35, 0.95);
+    --modal-bg-color: #4e342e;
+    --button-hover-bg-color: #795548;
+    --link-active-text-color: #ffffff;
+    --border-color: #795548;
+    --btn-bg-color: #5d4037;
+  }
+  html.theme-pastel {
+    --app-bg-color: #fff0f5;
+    --app-text-color: #5c3c4c;
+    --header-bg-color: rgba(255, 240, 245, 0.95);
+    --modal-bg-color: #ffffff;
+    --button-hover-bg-color: #90e0d0;
+    --link-active-text-color: #333;
+    --border-color: #e1bee7;
+    --btn-bg-color: #fce4ec;
+  }
+  html.theme-gray {
+    --app-bg-color: #f5f5f5;
+    --app-text-color: #333333;
+    --header-bg-color: rgba(238, 238, 238, 0.95);
+    --modal-bg-color: #ffffff;
+    --button-hover-bg-color: #bbbbbb;
+    --link-active-text-color: #ffffff;
+    --border-color: #b0b0b0;
+    --btn-bg-color: #e0e0e0;
+  }
+  
+  /* コンテナスタイル（ここでフォントを強力に固定） */
+  #link-menu-wrapper {
+    position: relative;
+    display: inline-block;
+    /* 親要素の影響を受けないようpx指定で固定 */
+    font-size: 13px !important; 
+    line-height: 1.5 !important;
+    /* 一般的なゴシック体へリセット */
+    font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+    color: var(--app-text-color);
+  }
+
+  /* > Link ボタンのスタイル */
+  #link-menu-btn {
+    background-color: var(--btn-bg-color);
+    color: var(--app-text-color);
+    border: 1px solid var(--border-color);
+    padding: 6px 12px; /* パディングも少し調整 */
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 13px !important; /* ボタン内の文字サイズも強制 */
+    font-family: inherit;
+    transition: background-color 0.2s;
+  }
+  #link-menu-btn:hover {
+    filter: brightness(0.95);
+  }
+
+  /* ポップアップメニュー本体 */
+  #link-menu-content {
+    display: none;
+    position: absolute;
+    top: 110%;
+    left: 0; /* 左揃え */
+    width: 240px; /* 少し幅をスリムに */
+    background-color: var(--header-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    flex-direction: column;
+    padding: 4px 0;
+    z-index: 2000;
+    text-align: left; /* 左揃えを強制 */
+  }
+  
+  #link-menu-content.show {
+    display: flex;
+  }
+
+  /* メニュー内の各アイテム */
+  .menu-item-row {
+    padding: 6px 12px;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    font-size: 13px !important; /* メニュー内文字サイズ固定 */
+  }
+  
+  .menu-item-row:hover, .menu-item-row a:hover {
+    background-color: var(--button-hover-bg-color);
+  }
+  
+  /* 直接リンクのスタイル */
+  .menu-item-row a {
+    text-decoration: none;
+    color: var(--app-text-color);
+    display: block;
+    width: 100%;
+    font-size: 13px !important;
+  }
+
+  /* ドロップダウン（サブメニュー）スタイル */
+  .nav-dropdown-menu {
+    display: none;
+    position: absolute;
+    top: -1px; /* 枠線の分微調整 */
+    left: 100%; /* 親メニューの右側に出す */
+    background-color: var(--modal-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    min-width: 180px;
+    z-index: 2001;
+    margin-left: 4px;
+  }
+  
+  /* サブメニューが表示されるとき */
+  .nav-dropdown.active .nav-dropdown-menu {
+    display: block;
+  }
+  
+  .nav-dropdown-menu a {
+    display: block;
+    padding: 6px 12px;
+    color: var(--app-text-color);
+    text-decoration: none;
+    transition: background-color 0.2s;
+    font-size: 13px !important;
+  }
+  .nav-dropdown-menu a:hover {
+    background-color: var(--button-hover-bg-color);
+  }
+
+  /* 三角アイコン */
+  .arrow-icon {
+    font-size: 10px; /* 矢印はさらに小さく */
+    margin-left: 0.5em;
+    opacity: 0.7;
+  }
+</style>
+
+<div id="link-menu-wrapper">
+  <button id="link-menu-btn">&gt; Link</button>
+
+  <div id="link-menu-content">
+    
+    <div class="nav-dropdown menu-item-row">
+      <span class="nav-dropdown-toggle">NPC向け立ち絵配布 <span class="arrow-icon">▶</span></span>
+      <div class="nav-dropdown-menu">
+        <a href="https://tatie.pages.dev/">現代日本</a>
+        <a href="https://tatie2.pages.dev/">近未来・サイバーパンク</a>
+        <a href="https://tatie3.pages.dev/">和風・時代劇</a>
+      </div>
+    </div>
+
+    <div class="nav-dropdown menu-item-row">
+      <span class="nav-dropdown-toggle">TRPGに使えるツール類 <span class="arrow-icon">▶</span></span>
+      <div class="nav-dropdown-menu">
+        <a href="https://pa-mu-da.github.io/shape/">図形を手軽に作るやつ</a>
+        <a href="https://pa-mu-da.github.io/pndtool/caragen.html">カード画像作成ツール</a>
+        <a href="https://pa-mu-da.github.io/mojipanelmaker/">文字パネルメーカー</a>
+        <a href="https://pa-mu-da.github.io/memotool/">PC・URLメモツール</a>
+        <a href="https://mokujisakuseiki.pages.dev/">webコンテンツ作成機</a>
+        <a href="https://pa-mu-da.github.io/solo_RPG_tool/">ソロRPGコンパニオン</a>
+        <a href="https://serene-toffee-2f7219.netlify.app/">APNGテロップ</a>
+        <a href="https://pa-mu-da.github.io/kaisoumap/">3D階層マップ作成</a>
+        <a href="https://gamebookmaker.pages.dev/">ゲームブック作成</a>
+      </div>
+    </div>
+
+    <div class="menu-item-row">
+      <a href="https://ttrpglinks.pages.dev/">TRPGお役立ちリンク</a>
+    </div>
+    
+  </div>
+</div>
+
+<script>
+  (function() {
+    const wrapper = document.getElementById('link-menu-wrapper');
+    const mainBtn = document.getElementById('link-menu-btn');
+    const menuContent = document.getElementById('link-menu-content');
+
+    // > Link ボタンの開閉
+    mainBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      menuContent.classList.toggle('show');
+    });
+
+    // サブメニュー（ドロップダウン）の制御
+    const dropdownToggles = wrapper.querySelectorAll('.nav-dropdown-toggle');
+    dropdownToggles.forEach(toggle => {
+      toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const parent = toggle.parentElement; // .nav-dropdown
+        const wasActive = parent.classList.contains('active');
+
+        // 同じ階層の他のドロップダウンを閉じる
+        wrapper.querySelectorAll('.nav-dropdown').forEach(d => {
+          if (d !== parent) d.classList.remove('active');
+        });
+
+        // クリックされたものをトグル
+        if (!wasActive) {
+          parent.classList.add('active');
+        } else {
+          parent.classList.remove('active');
+        }
+      });
+    });
+
+    // 外側クリックで全て閉じる
+    document.addEventListener('click', (e) => {
+      if (!wrapper.contains(e.target)) {
+        menuContent.classList.remove('show');
+        wrapper.querySelectorAll('.nav-dropdown').forEach(d => d.classList.remove('active'));
+      }
+    });
+  })();
+</script>
+<!-- ナビゲーションバー - ここまで貼り付け終了 --> 
                 3D階層マップ作成
                 <button id="help-btn" class="help-icon" title="About this tool">?</button>
             </div>
