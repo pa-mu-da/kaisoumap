@@ -472,3 +472,127 @@ body {
     font-size: 0.95rem;
     color: var(--text-primary);
 }
+
+/* --- Mobile Responsiveness --- */
+/* Hamburger Menu Button */
+#mobile-menu-btn {
+    font-size: 1.2rem;
+    padding: 8px 12px;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    display: none;
+    /* Hidden on desktop */
+}
+
+/* Mobile Sidebar Toggle Button (Floating) */
+#mobile-sidebar-toggle {
+    display: none;
+    /* Hidden on desktop */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    background-color: var(--accent-color);
+    border: none;
+    color: white;
+    border-radius: 50%;
+    /* Circle */
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    font-size: 1.4rem;
+    line-height: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 200;
+}
+
+@media (max-width: 768px) {
+    /* Hide dragged hint on mobile usually, or keep it? Keep for now. */
+
+    .toolbar {
+        padding: 0 10px;
+        position: relative;
+        /* Ensure dropdown is positioned relative to toolbar or body? */
+    }
+
+    /* Show Hamburger */
+    #mobile-menu-btn {
+        display: block;
+    }
+
+    /* Hide Toolbar Items by default */
+    #toolbar-items {
+        display: none;
+        position: absolute;
+        top: 60px;
+        /* Below toolbar */
+        right: 0;
+        width: 200px;
+        flex-direction: column;
+        background-color: var(--panel-bg);
+        border: 1px solid var(--panel-border);
+        padding: 10px;
+        gap: 10px;
+        border-radius: 0 0 0 8px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    #toolbar-items.show {
+        display: flex;
+    }
+
+    #toolbar-items .separator {
+        width: 100%;
+        height: 1px;
+        margin: 5px 0;
+    }
+
+    /* Adjust Graph Controls (Bottom Right Buttons) */
+    .graph-controls {
+        right: 20px;
+        /* Move closer to edge since sidebar is gone */
+        bottom: 80px;
+        /* Move up to avoid sidebar toggle if needed */
+        flex-direction: column;
+        /* Stack vertically for thumb access */
+    }
+
+    /* Sidebar - Collapsible Sheet */
+    .sidebar {
+        position: fixed;
+        top: auto;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        /* Full width */
+        width: 100%;
+        height: 60vh;
+        /* Takes up 60% of screen height */
+        max-height: 60vh;
+        border-radius: 12px 12px 0 0;
+        transform: translateY(100%);
+        /* Hidden by default */
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 150;
+        /* Above canvas, below modals */
+    }
+
+    .sidebar.open {
+        transform: translateY(0);
+    }
+
+    /* Show Mobile Toggle */
+    #mobile-sidebar-toggle {
+        display: block !important;
+    }
+
+    /* Help Modal */
+    .help-modal-content {
+        width: 90%;
+        max-width: 400px;
+    }
+}

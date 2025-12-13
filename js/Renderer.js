@@ -33,9 +33,13 @@ class Renderer {
         this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this));
         this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
         this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
-        this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this));
         this.canvas.addEventListener('wheel', this.onWheel.bind(this));
         this.canvas.addEventListener('dblclick', this.onDoubleClick.bind(this));
+
+        // Touch Events
+        this.canvas.addEventListener('touchstart', this.onTouchStart.bind(this), { passive: false });
+        this.canvas.addEventListener('touchmove', this.onTouchMove.bind(this), { passive: false });
+        this.canvas.addEventListener('touchend', this.onTouchEnd.bind(this));
 
         this.render = this.render.bind(this);
         requestAnimationFrame(this.render);
@@ -771,5 +775,77 @@ class Renderer {
         e.preventDefault();
         const zoom = e.deltaY < 0 ? 1.1 : 0.9;
         this.scale *= zoom;
+    }
+
+    // --- Touch Handling ---
+    onTouchStart(e) {
+        if (e.touches.length === 1) {
+            this.isDragging = true;
+            this.lastMouseX = e.touches[0].clientX;
+            this.lastMouseY = e.touches[0].clientY;
+
+            // For Tap Detection
+            this.touchStartTime = Date.now();
+            this.touchStartX = e.touches[0].clientX;
+            this.touchStartY = e.touches[0].clientY;
+        } else if (e.touches.length === 2) {
+            this.isCheckPinching = true;
+            this.initialPinchDist = this.getPinchDistance(e);
+            this.initialScale = this.scale;
+        }
+    }
+
+    onTouchMove(e) {
+        e.preventDefault(); // Prevent page scroll
+        if (e.touches.length === 1 && this.isDragging) {
+            const dx = e.touches[0].clientX - this.lastMouseX;
+            const dy = e.touches[0].clientY - this.lastMouseY;
+            this.offsetX += dx;
+            this.offsetY += dy;
+            this.lastMouseX = e.touches[0].clientX;
+            this.lastMouseY = e.touches[0].clientY;
+        } else if (e.touches.length === 2 && this.isCheckPinching) {
+            const dist = this.getPinchDistance(e);
+            if (dist > 10) { // Threshold
+                const zoom = dist / this.initialPinchDist;
+                this.scale = this.initialScale * zoom;
+            }
+        }
+    }
+
+    onTouchEnd(e) {
+        // If fingers lifted, stop pinch
+        if (e.touches.length < 2) {
+            this.isCheckPinching = false;
+        }
+
+        // If all fingers lifted
+        if (e.touches.length === 0) {
+            this.isDragging = false;
+
+            // Check for Tap (Short duration, small movement)
+            const now = Date.now();
+            const touchEnd = e.changedTouches[0];
+            const dist = Math.hypot(touchEnd.clientX - this.touchStartX, touchEnd.clientY - this.touchStartY);
+
+            if (now - this.touchStartTime < 300 && dist < 10) {
+                // Simulate Mouse Click for Selection
+                // Re-use onMouseDown logic by faking the event
+                // We need to ensure we call it with clientX/Y correct relative to canvas if onMouseDown uses them directly?
+                // onMouseDown uses e.clientX directly.
+                this.onMouseDown({
+                    button: 0,
+                    clientX: touchEnd.clientX,
+                    clientY: touchEnd.clientY
+                });
+            }
+        }
+    }
+
+    getPinchDistance(e) {
+        return Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+        );
     }
 }

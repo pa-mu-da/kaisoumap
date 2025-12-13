@@ -29,6 +29,40 @@ class UIManager {
         // --- Export UI ---
         this.setupExportUI();
 
+        // --- Mobile UI ---
+        safeClick('mobile-menu-btn', () => {
+            const items = document.getElementById('toolbar-items');
+            if (items) items.classList.toggle('show');
+        });
+
+        safeClick('mobile-sidebar-toggle', (e) => {
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar) sidebar.classList.toggle('open');
+            // Update text? e.target.textContent = sidebar.classList.contains('open') ? '閉じる' : '設定';
+            // Keep it simple "設定" is fine, or switch icon if I had one.
+        });
+
+        // Close mobile menu when clicking outside?
+        document.addEventListener('click', (e) => {
+            const items = document.getElementById('toolbar-items');
+            const btn = document.getElementById('mobile-menu-btn');
+            if (items && items.classList.contains('show')) {
+                if (!items.contains(e.target) && !btn.contains(e.target)) {
+                    items.classList.remove('show');
+                }
+            }
+
+            // Close sidebar when clicking canvas?
+            const sidebar = document.querySelector('.sidebar');
+            const toggle = document.getElementById('mobile-sidebar-toggle');
+            if (sidebar && sidebar.classList.contains('open') && window.innerWidth <= 768) {
+                // If clicked canvas
+                if (e.target.id === 'map-canvas' || e.target.id === 'canvas-container') {
+                    sidebar.classList.remove('open');
+                }
+            }
+        });
+
         // --- Toolbar Buttons ---
         safeClick('add-root-btn', () => {
             if (this.graph.nodes.size > 0 && !confirm('現在のマップはクリアされます。続行しますか？')) return;
@@ -407,6 +441,13 @@ class UIManager {
         placeholder.style.display = 'none';
         settings.style.display = 'block';
         this.renderEdgeSettings(edge);
+
+        // Mobile: Auto-open sidebar
+        if (window.innerWidth <= 768) {
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar) sidebar.classList.add('open');
+            this.switchTab('tab-connect'); // Ensure connect tab is active
+        }
     }
 
     renderEdgeSettings(edge) {
@@ -433,6 +474,11 @@ class UIManager {
         // Auto-switch to properties tab if a node is selected
         if (node) {
             this.switchTab('tab-props');
+            // Mobile: Auto-open sidebar
+            if (window.innerWidth <= 768) {
+                const sidebar = document.querySelector('.sidebar');
+                if (sidebar) sidebar.classList.add('open');
+            }
         }
     }
 

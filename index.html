@@ -2,472 +2,495 @@
 <html lang="ja">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D階層マップ作成ツール</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D階層マップ作成ツール</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <div class="app-container">
-        <!-- Toolbar -->
-        <header class="toolbar">
-            <div class="brand">
-<!-- ナビゲーションバー - ここから貼り付け開始 --> 
-<style>
-  /* カラーテーマCSS変数 (既存のまま) */
-  :root { /* Light Theme (Default) */
-    --app-bg-color: #f9fafb;
-    --app-text-color: #111827;
-    --header-bg-color: rgba(255, 255, 255, 0.95);
-    --modal-bg-color: #ffffff;
-    --button-hover-bg-color: #d1d5db;
-    --link-active-text-color: #3730a3;
-    --border-color: #d1d5db;
-    --btn-bg-color: #e5e7eb;
-  }
-  html.dark {
-    --app-bg-color: #111827;
-    --app-text-color: #f3f4f6;
-    --header-bg-color: rgba(31, 41, 55, 0.95);
-    --modal-bg-color: #1f2937;
-    --button-hover-bg-color: #4b5563;
-    --link-active-text-color: #e0e7ff;
-    --border-color: #4b5563;
-    --btn-bg-color: #374151;
-  }
-  html.theme-earth.dark {
-    --app-bg-color: #3e2723;
-    --app-text-color: #efebe9;
-    --header-bg-color: rgba(62, 39, 35, 0.95);
-    --modal-bg-color: #4e342e;
-    --button-hover-bg-color: #795548;
-    --link-active-text-color: #ffffff;
-    --border-color: #795548;
-    --btn-bg-color: #5d4037;
-  }
-  html.theme-pastel {
-    --app-bg-color: #fff0f5;
-    --app-text-color: #5c3c4c;
-    --header-bg-color: rgba(255, 240, 245, 0.95);
-    --modal-bg-color: #ffffff;
-    --button-hover-bg-color: #90e0d0;
-    --link-active-text-color: #333;
-    --border-color: #e1bee7;
-    --btn-bg-color: #fce4ec;
-  }
-  html.theme-gray {
-    --app-bg-color: #f5f5f5;
-    --app-text-color: #333333;
-    --header-bg-color: rgba(238, 238, 238, 0.95);
-    --modal-bg-color: #ffffff;
-    --button-hover-bg-color: #bbbbbb;
-    --link-active-text-color: #ffffff;
-    --border-color: #b0b0b0;
-    --btn-bg-color: #e0e0e0;
-  }
-  
-  /* コンテナスタイル（ここでフォントを強力に固定） */
-  #link-menu-wrapper {
-    position: relative;
-    display: inline-block;
-    /* 親要素の影響を受けないようpx指定で固定 */
-    font-size: 13px !important; 
-    line-height: 1.5 !important;
-    /* 一般的なゴシック体へリセット */
-    font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
-    color: var(--app-text-color);
-  }
+  <div class="app-container">
+    <!-- Toolbar -->
+    <header class="toolbar">
+      <div class="brand">
+        <!-- ナビゲーションバー - ここから貼り付け開始 -->
+        <style>
+          /* カラーテーマCSS変数 (既存のまま) */
+          :root {
+            /* Light Theme (Default) */
+            --app-bg-color: #f9fafb;
+            --app-text-color: #111827;
+            --header-bg-color: rgba(255, 255, 255, 0.95);
+            --modal-bg-color: #ffffff;
+            --button-hover-bg-color: #d1d5db;
+            --link-active-text-color: #3730a3;
+            --border-color: #d1d5db;
+            --btn-bg-color: #e5e7eb;
+          }
 
-  /* > Link ボタンのスタイル */
-  #link-menu-btn {
-    background-color: var(--btn-bg-color);
-    color: var(--app-text-color);
-    border: 1px solid var(--border-color);
-    padding: 6px 12px; /* パディングも少し調整 */
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 13px !important; /* ボタン内の文字サイズも強制 */
-    font-family: inherit;
-    transition: background-color 0.2s;
-  }
-  #link-menu-btn:hover {
-    filter: brightness(0.95);
-  }
+          html.dark {
+            --app-bg-color: #111827;
+            --app-text-color: #f3f4f6;
+            --header-bg-color: rgba(31, 41, 55, 0.95);
+            --modal-bg-color: #1f2937;
+            --button-hover-bg-color: #4b5563;
+            --link-active-text-color: #e0e7ff;
+            --border-color: #4b5563;
+            --btn-bg-color: #374151;
+          }
 
-  /* ポップアップメニュー本体 */
-  #link-menu-content {
-    display: none;
-    position: absolute;
-    top: 110%;
-    left: 0; /* 左揃え */
-    width: 240px; /* 少し幅をスリムに */
-    background-color: var(--header-bg-color);
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    flex-direction: column;
-    padding: 4px 0;
-    z-index: 2000;
-    text-align: left; /* 左揃えを強制 */
-  }
-  
-  #link-menu-content.show {
-    display: flex;
-  }
+          html.theme-earth.dark {
+            --app-bg-color: #3e2723;
+            --app-text-color: #efebe9;
+            --header-bg-color: rgba(62, 39, 35, 0.95);
+            --modal-bg-color: #4e342e;
+            --button-hover-bg-color: #795548;
+            --link-active-text-color: #ffffff;
+            --border-color: #795548;
+            --btn-bg-color: #5d4037;
+          }
 
-  /* メニュー内の各アイテム */
-  .menu-item-row {
-    padding: 6px 12px;
-    width: 100%;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    position: relative;
-    font-size: 13px !important; /* メニュー内文字サイズ固定 */
-  }
-  
-  .menu-item-row:hover, .menu-item-row a:hover {
-    background-color: var(--button-hover-bg-color);
-  }
-  
-  /* 直接リンクのスタイル */
-  .menu-item-row a {
-    text-decoration: none;
-    color: var(--app-text-color);
-    display: block;
-    width: 100%;
-    font-size: 13px !important;
-  }
+          html.theme-pastel {
+            --app-bg-color: #fff0f5;
+            --app-text-color: #5c3c4c;
+            --header-bg-color: rgba(255, 240, 245, 0.95);
+            --modal-bg-color: #ffffff;
+            --button-hover-bg-color: #90e0d0;
+            --link-active-text-color: #333;
+            --border-color: #e1bee7;
+            --btn-bg-color: #fce4ec;
+          }
 
-  /* ドロップダウン（サブメニュー）スタイル */
-  .nav-dropdown-menu {
-    display: none;
-    position: absolute;
-    top: -1px; /* 枠線の分微調整 */
-    left: 100%; /* 親メニューの右側に出す */
-    background-color: var(--modal-bg-color);
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    min-width: 180px;
-    z-index: 2001;
-    margin-left: 4px;
-  }
-  
-  /* サブメニューが表示されるとき */
-  .nav-dropdown.active .nav-dropdown-menu {
-    display: block;
-  }
-  
-  .nav-dropdown-menu a {
-    display: block;
-    padding: 6px 12px;
-    color: var(--app-text-color);
-    text-decoration: none;
-    transition: background-color 0.2s;
-    font-size: 13px !important;
-  }
-  .nav-dropdown-menu a:hover {
-    background-color: var(--button-hover-bg-color);
-  }
+          html.theme-gray {
+            --app-bg-color: #f5f5f5;
+            --app-text-color: #333333;
+            --header-bg-color: rgba(238, 238, 238, 0.95);
+            --modal-bg-color: #ffffff;
+            --button-hover-bg-color: #bbbbbb;
+            --link-active-text-color: #ffffff;
+            --border-color: #b0b0b0;
+            --btn-bg-color: #e0e0e0;
+          }
 
-  /* 三角アイコン */
-  .arrow-icon {
-    font-size: 10px; /* 矢印はさらに小さく */
-    margin-left: 0.5em;
-    opacity: 0.7;
-  }
-</style>
+          /* コンテナスタイル（ここでフォントを強力に固定） */
+          #link-menu-wrapper {
+            position: relative;
+            display: inline-block;
+            /* 親要素の影響を受けないようpx指定で固定 */
+            font-size: 13px !important;
+            line-height: 1.5 !important;
+            /* 一般的なゴシック体へリセット */
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            color: var(--app-text-color);
+          }
 
-<div id="link-menu-wrapper">
-  <button id="link-menu-btn">&gt; Link</button>
+          /* > Link ボタンのスタイル */
+          #link-menu-btn {
+            background-color: var(--btn-bg-color);
+            color: var(--app-text-color);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            /* パディングも少し調整 */
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px !important;
+            /* ボタン内の文字サイズも強制 */
+            font-family: inherit;
+            transition: background-color 0.2s;
+          }
 
-  <div id="link-menu-content">
-    
-    <div class="nav-dropdown menu-item-row">
-      <span class="nav-dropdown-toggle">NPC向け立ち絵配布 <span class="arrow-icon">▶</span></span>
-      <div class="nav-dropdown-menu">
-        <a href="https://tatie.pages.dev/">現代日本</a>
-        <a href="https://tatie2.pages.dev/">近未来・サイバーパンク</a>
-        <a href="https://tatie3.pages.dev/">和風・時代劇</a>
-      </div>
-    </div>
+          #link-menu-btn:hover {
+            filter: brightness(0.95);
+          }
 
-    <div class="nav-dropdown menu-item-row">
-      <span class="nav-dropdown-toggle">TRPGに使えるツール類 <span class="arrow-icon">▶</span></span>
-      <div class="nav-dropdown-menu">
-        <a href="https://pa-mu-da.github.io/shape/">図形を手軽に作るやつ</a>
-        <a href="https://pa-mu-da.github.io/pndtool/caragen.html">カード画像作成ツール</a>
-        <a href="https://pa-mu-da.github.io/mojipanelmaker/">文字パネルメーカー</a>
-        <a href="https://pa-mu-da.github.io/memotool/">PC・URLメモツール</a>
-        <a href="https://mokujisakuseiki.pages.dev/">webコンテンツ作成機</a>
-        <a href="https://pa-mu-da.github.io/solo_RPG_tool/">ソロRPGコンパニオン</a>
-        <a href="https://serene-toffee-2f7219.netlify.app/">APNGテロップ</a>
-        <a href="https://pa-mu-da.github.io/kaisoumap/">3D階層マップ作成</a>
-        <a href="https://gamebookmaker.pages.dev/">ゲームブック作成</a>
-      </div>
-    </div>
+          /* ポップアップメニュー本体 */
+          #link-menu-content {
+            display: none;
+            position: absolute;
+            top: 110%;
+            left: 0;
+            /* 左揃え */
+            width: 240px;
+            /* 少し幅をスリムに */
+            background-color: var(--header-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            flex-direction: column;
+            padding: 4px 0;
+            z-index: 2000;
+            text-align: left;
+            /* 左揃えを強制 */
+          }
 
-    <div class="menu-item-row">
-      <a href="https://ttrpglinks.pages.dev/">TRPGお役立ちリンク</a>
-    </div>
-    
-  </div>
-</div>
+          #link-menu-content.show {
+            display: flex;
+          }
 
-<script>
-  (function() {
-    const wrapper = document.getElementById('link-menu-wrapper');
-    const mainBtn = document.getElementById('link-menu-btn');
-    const menuContent = document.getElementById('link-menu-content');
+          /* メニュー内の各アイテム */
+          .menu-item-row {
+            padding: 6px 12px;
+            width: 100%;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            font-size: 13px !important;
+            /* メニュー内文字サイズ固定 */
+          }
 
-    // > Link ボタンの開閉
-    mainBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      menuContent.classList.toggle('show');
-    });
+          .menu-item-row:hover,
+          .menu-item-row a:hover {
+            background-color: var(--button-hover-bg-color);
+          }
 
-    // サブメニュー（ドロップダウン）の制御
-    const dropdownToggles = wrapper.querySelectorAll('.nav-dropdown-toggle');
-    dropdownToggles.forEach(toggle => {
-      toggle.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const parent = toggle.parentElement; // .nav-dropdown
-        const wasActive = parent.classList.contains('active');
+          /* 直接リンクのスタイル */
+          .menu-item-row a {
+            text-decoration: none;
+            color: var(--app-text-color);
+            display: block;
+            width: 100%;
+            font-size: 13px !important;
+          }
 
-        // 同じ階層の他のドロップダウンを閉じる
-        wrapper.querySelectorAll('.nav-dropdown').forEach(d => {
-          if (d !== parent) d.classList.remove('active');
-        });
+          /* ドロップダウン（サブメニュー）スタイル */
+          .nav-dropdown-menu {
+            display: none;
+            position: absolute;
+            top: -1px;
+            /* 枠線の分微調整 */
+            left: 100%;
+            /* 親メニューの右側に出す */
+            background-color: var(--modal-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            min-width: 180px;
+            z-index: 2001;
+            margin-left: 4px;
+          }
 
-        // クリックされたものをトグル
-        if (!wasActive) {
-          parent.classList.add('active');
-        } else {
-          parent.classList.remove('active');
-        }
-      });
-    });
+          /* サブメニューが表示されるとき */
+          .nav-dropdown.active .nav-dropdown-menu {
+            display: block;
+          }
 
-    // 外側クリックで全て閉じる
-    document.addEventListener('click', (e) => {
-      if (!wrapper.contains(e.target)) {
-        menuContent.classList.remove('show');
-        wrapper.querySelectorAll('.nav-dropdown').forEach(d => d.classList.remove('active'));
-      }
-    });
-  })();
-</script>
-<!-- ナビゲーションバー - ここまで貼り付け終了 --> 
-                3D階層マップ作成
-                <button id="help-btn" class="help-icon" title="About this tool">?</button>
-            </div>
-            <button id="add-root-btn" class="btn">新規マップ作成</button>
-            <button id="add-independent-btn" class="btn">+ 独立ノード追加</button>
-            <!-- Connect Mode moved to sidebar tab -->
-            <div class="separator"></div>
-            <button id="export-json-btn" class="btn">JSON保存</button>
-            <button id="import-json-btn" class="btn">JSON読込</button>
-            <input type="file" id="json-file-input" hidden accept=".json">
-            <!-- Export Image moved to sidebar tab -->
+          .nav-dropdown-menu a {
+            display: block;
+            padding: 6px 12px;
+            color: var(--app-text-color);
+            text-decoration: none;
+            transition: background-color 0.2s;
+            font-size: 13px !important;
+          }
 
-        </header>
+          .nav-dropdown-menu a:hover {
+            background-color: var(--button-hover-bg-color);
+          }
 
-        <!-- Main Workspace -->
-        <main class="workspace">
-            <div id="canvas-container">
-                <canvas id="map-canvas"></canvas>
-                <div id="drag-hint">右クリック + ドラッグで画面を移動</div>
+          /* 三角アイコン */
+          .arrow-icon {
+            font-size: 10px;
+            /* 矢印はさらに小さく */
+            margin-left: 0.5em;
+            opacity: 0.7;
+          }
+        </style>
+
+        <div id="link-menu-wrapper">
+          <button id="link-menu-btn">&gt; Link</button>
+
+          <div id="link-menu-content">
+
+            <div class="nav-dropdown menu-item-row">
+              <span class="nav-dropdown-toggle">NPC向け立ち絵配布 <span class="arrow-icon">▶</span></span>
+              <div class="nav-dropdown-menu">
+                <a href="https://tatie.pages.dev/">現代日本</a>
+                <a href="https://tatie2.pages.dev/">近未来・サイバーパンク</a>
+                <a href="https://tatie3.pages.dev/">和風・時代劇</a>
+              </div>
             </div>
 
-            <!-- Floating Sidebar -->
-            <aside class="sidebar">
-                <!-- Tab Navigation -->
-                <div class="sidebar-tabs">
-                    <button class="tab-btn active" data-tab="tab-view">表示</button>
-                    <button class="tab-btn" data-tab="tab-props">ノード編集</button>
-                    <button class="tab-btn" data-tab="tab-connect">接続線</button>
-                    <button class="tab-btn" data-tab="tab-export">書き出し</button>
-                </div>
-
-                <!-- Tab Content: View Settings -->
-                <div id="tab-view" class="tab-pane active">
-                    <div id="view-settings-panel" class="panel-section">
-                        <div class="panel-header">
-                            <h3>表示設定</h3>
-                        </div>
-                        <div class="panel-content" id="view-settings-content">
-                            <!-- Dynamic Checkboxes -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tab Content: Properties -->
-                <div id="tab-props" class="tab-pane">
-                    <div id="property-panel" class="panel-section">
-                        <div class="panel-header">
-                            <h3>プロパティ</h3>
-                        </div>
-                        <div class="panel-content" id="properties-content">
-                            <p class="placeholder-text">ノードを選択すると設定が表示されます。</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tab Content: Connection Line -->
-                <div id="tab-connect" class="tab-pane">
-                    <div class="panel-section">
-                        <div class="panel-header">
-                            <h3>接続線ツール</h3>
-                        </div>
-                        <div class="panel-content" id="connection-content">
-                            <div class="form-group">
-                                <button id="connect-mode-btn" class="btn" style="width:100%;">接続モード: OFF</button>
-                            </div>
-                            <hr style="border-color:var(--panel-border); margin-bottom:15px;">
-                            <p class="placeholder-text" id="edge-placeholder">線を選択すると設定が表示されます。</p>
-                            <div id="edge-settings" style="display:none;">
-                                <!-- Edge settings injected here -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tab Content: Export -->
-                <div id="tab-export" class="tab-pane">
-                    <div class="panel-section">
-                        <div class="panel-header">
-                            <h3>画像書き出し</h3>
-                        </div>
-                        <div class="panel-content" style="display: flex; flex-direction: column; gap: 10px;">
-
-                            <!-- Preview / Minimap -->
-                            <div style="margin-bottom: 4px;">
-                                <label
-                                    style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 4px; display: block;">プレビュー
-                                    / 範囲選択</label>
-                                <div id="export-preview-container" class="preview-container">
-                                    <canvas id="minimap-canvas"></canvas>
-                                    <div id="crop-overlay">
-                                        <div id="crop-box">
-                                            <!-- Handles -->
-                                            <div class="resize-handle nw" data-handle="nw"></div>
-                                            <div class="resize-handle ne" data-handle="ne"></div>
-                                            <div class="resize-handle sw" data-handle="sw"></div>
-                                            <div class="resize-handle se" data-handle="se"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; margin-top: 6px;">
-                                    <button id="crop-reset-btn" class="btn small"
-                                        style="font-size: 0.75rem; padding: 4px 8px;">全体を選択</button>
-                                    <div style="font-size: 0.75rem; color: #888; align-self: center;"
-                                        id="crop-info-text">Select area</div>
-                                </div>
-                                <div style="font-size: 0.75rem; color: #888; align-self: center;" id="crop-info-text">
-                                    Select area</div>
-                            </div>
-                            <!-- Text Export Option -->
-                            <div class="form-group" style="margin-top: 8px; margin-bottom: 0;">
-                                <label style="margin-bottom: 4px;">テキスト出力 (Text Output):</label>
-                                <div style="display: flex; gap: 12px;">
-                                    <label
-                                        style="font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 4px; color: var(--text-primary);">
-                                        <input type="radio" name="export-text-opt" value="on" checked> あり (On)
-                                    </label>
-                                    <label
-                                        style="font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 4px; color: var(--text-primary);">
-                                        <input type="radio" name="export-text-opt" value="off"> なし (Off)
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <hr style="border-color: var(--panel-border); width: 100%;">
-
-                        <!-- Aspect Ratio Settings -->
-                        <div class="form-group" style="margin-bottom: 8px;">
-                            <div
-                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                <label style="margin: 0;">アスペクト比 (Aspect Ratio)</label>
-                                <label
-                                    style="font-size: 0.8rem; display: flex; align-items: center; gap: 4px; cursor: pointer;">
-                                    <input type="checkbox" id="crop-aspect-fixed" checked> 固定
-                                </label>
-                            </div>
-                            <div style="display: flex; gap: 8px; align-items: center;">
-                                <input type="number" id="crop-ratio-w" value="16" class="ratio-input">
-                                <span>:</span>
-                                <input type="number" id="crop-ratio-h" value="9" class="ratio-input">
-                            </div>
-                        </div>
-
-                        <!-- Existing Export Settings -->
-                        <div class="form-group" style="margin-bottom: 8px;">
-                            <label>倍率 (Scale):</label>
-                            <select id="export-scale">
-                                <option value="1">1x</option>
-                                <option value="2" selected>2x</option>
-                                <option value="4">4x</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group" style="margin-bottom: 8px;">
-                            <label>背景色:</label>
-                            <div style="display:flex; gap:10px; align-items:center;">
-                                <input type="color" id="export-bg-color" value="#000000">
-                                <label><input type="checkbox" id="export-transparent" checked> 透過</label>
-                            </div>
-                        </div>
-
-                        <div style="margin-top:auto; padding-top: 10px;">
-                            <button id="confirm-export-btn" class="btn primary" style="width:100%;">画像を保存</button>
-                        </div>
-                    </div>
-                </div>
-    </div>
-    </aside>
-    </main>
-
-    <!-- Graph controls helper (Bottom Right) -->
-    <div class="graph-controls">
-        <button id="duplicate-btn" class="btn secondary" disabled>複製</button>
-        <button id="add-child-btn" class="btn secondary" disabled>+ 子ノード追加</button>
-        <button id="delete-btn" class="btn danger" disabled>削除</button>
-    </div>
-
-    <!-- Export Modal Removed -->
-    </div>
-
-    <!-- Scripts (Loaded sequentially to avoid Module CORS issues) -->
-    <script src="js/GraphModel.js"></script>
-    <script src="js/LayoutEngine.js"></script>
-    <script src="js/Renderer.js"></script>
-    <script src="js/UIManager.js"></script>
-    <script src="js/main.js"></script>
-    <!-- Help Modal -->
-    <div id="help-modal" class="modal-overlay" style="display: none;">
-        <div class="modal help-modal-content">
-            <h3>このツールについて</h3>
-            <div class="help-text">
-                <p>ノードをつないで簡易マップを作成できます。</p>
-                <p>作成したものはユーザーの権利と責任の下に自由にご利用ください。クレジットは不要です。</p>
-                <hr style="border-color: var(--panel-border); margin: 15px 0;">
-                <p>生成AIを用いて開発しています。</p>
-                <p>ツール内の処理はHTML/JSにより全てブラウザ内で完結し、データの送信・収集は一切行われません。</p>
+            <div class="nav-dropdown menu-item-row">
+              <span class="nav-dropdown-toggle">TRPGに使えるツール類 <span class="arrow-icon">▶</span></span>
+              <div class="nav-dropdown-menu">
+                <a href="https://pa-mu-da.github.io/shape/">図形を手軽に作るやつ</a>
+                <a href="https://pa-mu-da.github.io/pndtool/caragen.html">カード画像作成ツール</a>
+                <a href="https://pa-mu-da.github.io/mojipanelmaker/">文字パネルメーカー</a>
+                <a href="https://pa-mu-da.github.io/memotool/">PC・URLメモツール</a>
+                <a href="https://mokujisakuseiki.pages.dev/">webコンテンツ作成機</a>
+                <a href="https://pa-mu-da.github.io/solo_RPG_tool/">ソロRPGコンパニオン</a>
+                <a href="https://serene-toffee-2f7219.netlify.app/">APNGテロップ</a>
+                <a href="https://pa-mu-da.github.io/kaisoumap/">3D階層マップ作成</a>
+                <a href="https://gamebookmaker.pages.dev/">ゲームブック作成</a>
+              </div>
             </div>
-            <div class="modal-actions" style="display: flex; justify-content: flex-end;">
-                <button id="close-help-btn" class="btn primary">閉じる</button>
+
+            <div class="menu-item-row">
+              <a href="https://ttrpglinks.pages.dev/">TRPGお役立ちリンク</a>
             </div>
+
+          </div>
         </div>
+
+        <script>
+          (function () {
+            const wrapper = document.getElementById('link-menu-wrapper');
+            const mainBtn = document.getElementById('link-menu-btn');
+            const menuContent = document.getElementById('link-menu-content');
+
+            // > Link ボタンの開閉
+            mainBtn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              menuContent.classList.toggle('show');
+            });
+
+            // サブメニュー（ドロップダウン）の制御
+            const dropdownToggles = wrapper.querySelectorAll('.nav-dropdown-toggle');
+            dropdownToggles.forEach(toggle => {
+              toggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const parent = toggle.parentElement; // .nav-dropdown
+                const wasActive = parent.classList.contains('active');
+
+                // 同じ階層の他のドロップダウンを閉じる
+                wrapper.querySelectorAll('.nav-dropdown').forEach(d => {
+                  if (d !== parent) d.classList.remove('active');
+                });
+
+                // クリックされたものをトグル
+                if (!wasActive) {
+                  parent.classList.add('active');
+                } else {
+                  parent.classList.remove('active');
+                }
+              });
+            });
+
+            // 外側クリックで全て閉じる
+            document.addEventListener('click', (e) => {
+              if (!wrapper.contains(e.target)) {
+                menuContent.classList.remove('show');
+                wrapper.querySelectorAll('.nav-dropdown').forEach(d => d.classList.remove('active'));
+              }
+            });
+          })();
+        </script>
+        <!-- ナビゲーションバー - ここまで貼り付け終了 -->
+        3D階層マップ作成
+        <button id="help-btn" class="help-icon" title="About this tool">?</button>
+      </div>
+      <!-- Mobile Menu Toggle -->
+      <button id="mobile-menu-btn" class="btn icon-btn" style="display: none;">
+        <span class="hamburger-icon">☰</span>
+      </button>
+
+      <div id="toolbar-items" class="tools">
+        <button id="add-root-btn" class="btn">新規マップ作成</button>
+        <button id="add-independent-btn" class="btn">+ 独立ノード追加</button>
+        <div class="separator"></div>
+        <button id="export-json-btn" class="btn">JSON保存</button>
+        <button id="import-json-btn" class="btn">JSON読込</button>
+        <input type="file" id="json-file-input" hidden accept=".json">
+      </div>
+
+      <button id="mobile-sidebar-toggle" class="btn icon-btn"
+        style="display:none; position:fixed; z-index:200;">☰</button>
+
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="workspace">
+      <div id="canvas-container">
+        <canvas id="map-canvas"></canvas>
+        <div id="drag-hint">右クリック + ドラッグで画面を移動</div>
+      </div>
+
+      <!-- Floating Sidebar -->
+      <aside class="sidebar">
+        <!-- Tab Navigation -->
+        <div class="sidebar-tabs">
+          <button class="tab-btn active" data-tab="tab-view">表示</button>
+          <button class="tab-btn" data-tab="tab-props">ノード編集</button>
+          <button class="tab-btn" data-tab="tab-connect">接続線</button>
+          <button class="tab-btn" data-tab="tab-export">書き出し</button>
+        </div>
+
+        <!-- Tab Content: View Settings -->
+        <div id="tab-view" class="tab-pane active">
+          <div id="view-settings-panel" class="panel-section">
+            <div class="panel-header">
+              <h3>表示設定</h3>
+            </div>
+            <div class="panel-content" id="view-settings-content">
+              <!-- Dynamic Checkboxes -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Content: Properties -->
+        <div id="tab-props" class="tab-pane">
+          <div id="property-panel" class="panel-section">
+            <div class="panel-header">
+              <h3>プロパティ</h3>
+            </div>
+            <div class="panel-content" id="properties-content">
+              <p class="placeholder-text">ノードを選択すると設定が表示されます。</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Content: Connection Line -->
+        <div id="tab-connect" class="tab-pane">
+          <div class="panel-section">
+            <div class="panel-header">
+              <h3>接続線ツール</h3>
+            </div>
+            <div class="panel-content" id="connection-content">
+              <div class="form-group">
+                <button id="connect-mode-btn" class="btn" style="width:100%;">接続モード: OFF</button>
+              </div>
+              <hr style="border-color:var(--panel-border); margin-bottom:15px;">
+              <p class="placeholder-text" id="edge-placeholder">線を選択すると設定が表示されます。</p>
+              <div id="edge-settings" style="display:none;">
+                <!-- Edge settings injected here -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Content: Export -->
+        <div id="tab-export" class="tab-pane">
+          <div class="panel-section">
+            <div class="panel-header">
+              <h3>画像書き出し</h3>
+            </div>
+            <div class="panel-content" style="display: flex; flex-direction: column; gap: 10px;">
+
+              <!-- Preview / Minimap -->
+              <div style="margin-bottom: 4px;">
+                <label
+                  style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 4px; display: block;">プレビュー
+                  / 範囲選択</label>
+                <div id="export-preview-container" class="preview-container">
+                  <canvas id="minimap-canvas"></canvas>
+                  <div id="crop-overlay">
+                    <div id="crop-box">
+                      <!-- Handles -->
+                      <div class="resize-handle nw" data-handle="nw"></div>
+                      <div class="resize-handle ne" data-handle="ne"></div>
+                      <div class="resize-handle sw" data-handle="sw"></div>
+                      <div class="resize-handle se" data-handle="se"></div>
+                    </div>
+                  </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 6px;">
+                  <button id="crop-reset-btn" class="btn small"
+                    style="font-size: 0.75rem; padding: 4px 8px;">全体を選択</button>
+                  <div style="font-size: 0.75rem; color: #888; align-self: center;" id="crop-info-text">Select area
+                  </div>
+                </div>
+                <div style="font-size: 0.75rem; color: #888; align-self: center;" id="crop-info-text">
+                  Select area</div>
+              </div>
+              <!-- Text Export Option -->
+              <div class="form-group" style="margin-top: 8px; margin-bottom: 0;">
+                <label style="margin-bottom: 4px;">テキスト出力 (Text Output):</label>
+                <div style="display: flex; gap: 12px;">
+                  <label
+                    style="font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 4px; color: var(--text-primary);">
+                    <input type="radio" name="export-text-opt" value="on" checked> あり (On)
+                  </label>
+                  <label
+                    style="font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 4px; color: var(--text-primary);">
+                    <input type="radio" name="export-text-opt" value="off"> なし (Off)
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <hr style="border-color: var(--panel-border); width: 100%;">
+
+            <!-- Aspect Ratio Settings -->
+            <div class="form-group" style="margin-bottom: 8px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <label style="margin: 0;">アスペクト比 (Aspect Ratio)</label>
+                <label style="font-size: 0.8rem; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                  <input type="checkbox" id="crop-aspect-fixed" checked> 固定
+                </label>
+              </div>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <input type="number" id="crop-ratio-w" value="16" class="ratio-input">
+                <span>:</span>
+                <input type="number" id="crop-ratio-h" value="9" class="ratio-input">
+              </div>
+            </div>
+
+            <!-- Existing Export Settings -->
+            <div class="form-group" style="margin-bottom: 8px;">
+              <label>倍率 (Scale):</label>
+              <select id="export-scale">
+                <option value="1">1x</option>
+                <option value="2" selected>2x</option>
+                <option value="4">4x</option>
+              </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 8px;">
+              <label>背景色:</label>
+              <div style="display:flex; gap:10px; align-items:center;">
+                <input type="color" id="export-bg-color" value="#000000">
+                <label><input type="checkbox" id="export-transparent" checked> 透過</label>
+              </div>
+            </div>
+
+            <div style="margin-top:auto; padding-top: 10px;">
+              <button id="confirm-export-btn" class="btn primary" style="width:100%;">画像を保存</button>
+            </div>
+          </div>
+        </div>
+  </div>
+  </aside>
+  </main>
+
+  <!-- Graph controls helper (Bottom Right) -->
+  <div class="graph-controls">
+    <button id="duplicate-btn" class="btn secondary" disabled>複製</button>
+    <button id="add-child-btn" class="btn secondary" disabled>+ 子ノード追加</button>
+    <button id="delete-btn" class="btn danger" disabled>削除</button>
+  </div>
+
+  <!-- Export Modal Removed -->
+  </div>
+
+  <!-- Scripts (Loaded sequentially to avoid Module CORS issues) -->
+  <script src="js/GraphModel.js"></script>
+  <script src="js/LayoutEngine.js"></script>
+  <script src="js/Renderer.js"></script>
+  <script src="js/UIManager.js"></script>
+  <script src="js/main.js"></script>
+  <!-- Help Modal -->
+  <div id="help-modal" class="modal-overlay" style="display: none;">
+    <div class="modal help-modal-content">
+      <h3>このツールについて</h3>
+      <div class="help-text">
+        <p>ノードをつないで簡易マップを作成できます。</p>
+        <p>作成したものはユーザーの権利と責任の下に自由にご利用ください。クレジットは不要です。</p>
+        <hr style="border-color: var(--panel-border); margin: 15px 0;">
+        <p>生成AIを用いて開発しています。</p>
+        <p>ツール内の処理はHTML/JSにより全てブラウザ内で完結し、データの送信・収集は一切行われません。</p>
+      </div>
+      <div class="modal-actions" style="display: flex; justify-content: flex-end;">
+        <button id="close-help-btn" class="btn primary">閉じる</button>
+      </div>
     </div>
+  </div>
 
 </body>
 
