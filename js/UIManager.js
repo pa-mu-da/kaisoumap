@@ -8,11 +8,26 @@ class UIManager {
         this.isConnectMode = false;
         this.connectSourceId = null;
 
+
         this.setupEventListeners();
         this.setupGlobalEvents();
     }
 
+    setSidebarState(isOpen) {
+        const sidebar = document.querySelector('.sidebar');
+        if (sidebar) {
+            if (isOpen) {
+                sidebar.classList.add('open');
+                document.body.classList.add('sidebar-open');
+            } else {
+                sidebar.classList.remove('open');
+                document.body.classList.remove('sidebar-open');
+            }
+        }
+    }
+
     setupEventListeners() {
+
         const safeClick = (id, fn) => {
             const el = document.getElementById(id);
             if (el) {
@@ -37,10 +52,12 @@ class UIManager {
 
         safeClick('mobile-sidebar-toggle', (e) => {
             const sidebar = document.querySelector('.sidebar');
-            if (sidebar) sidebar.classList.toggle('open');
-            // Update text? e.target.textContent = sidebar.classList.contains('open') ? '閉じる' : '設定';
-            // Keep it simple "設定" is fine, or switch icon if I had one.
+            if (sidebar) {
+                const isOpen = !sidebar.classList.contains('open');
+                this.setSidebarState(isOpen);
+            }
         });
+
 
         // Close mobile menu when clicking outside?
         document.addEventListener('click', (e) => {
@@ -54,13 +71,13 @@ class UIManager {
 
             // Close sidebar when clicking canvas?
             const sidebar = document.querySelector('.sidebar');
-            const toggle = document.getElementById('mobile-sidebar-toggle');
             if (sidebar && sidebar.classList.contains('open') && window.innerWidth <= 768) {
                 // If clicked canvas
                 if (e.target.id === 'map-canvas' || e.target.id === 'canvas-container') {
-                    sidebar.classList.remove('open');
+                    this.setSidebarState(false);
                 }
             }
+
         });
 
         // --- Toolbar Buttons ---
@@ -444,10 +461,10 @@ class UIManager {
 
         // Mobile: Auto-open sidebar
         if (window.innerWidth <= 768) {
-            const sidebar = document.querySelector('.sidebar');
-            if (sidebar) sidebar.classList.add('open');
+            this.setSidebarState(true);
             this.switchTab('tab-connect'); // Ensure connect tab is active
         }
+
     }
 
     renderEdgeSettings(edge) {
@@ -476,9 +493,9 @@ class UIManager {
             this.switchTab('tab-props');
             // Mobile: Auto-open sidebar
             if (window.innerWidth <= 768) {
-                const sidebar = document.querySelector('.sidebar');
-                if (sidebar) sidebar.classList.add('open');
+                this.setSidebarState(true);
             }
+
         }
     }
 

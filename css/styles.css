@@ -246,6 +246,7 @@ body {
     /* To left of sidebar */
     display: flex;
     gap: 10px;
+    transition: bottom 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Force dark style for graph controls to be visible on light canvas */
@@ -583,6 +584,11 @@ body {
 
     .sidebar.open {
         transform: translateY(0);
+    }
+
+    /* Shift graph controls up when sidebar is open */
+    body.sidebar-open .graph-controls {
+        bottom: calc(60vh + 20px);
     }
 
     /* Show Mobile Toggle */
